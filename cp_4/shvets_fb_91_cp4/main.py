@@ -181,25 +181,11 @@ def get_e(pair):
     return e
 def Encrypt(M, pair, key):
 
-    #pair.append(get_e(pair))
-    #while gcd(pair[3], pair[4]) != 1:
-        #pair[4] = get_e(pair)
+
     C = gorner(M, key, pair[2])
-    #pair.append(7)
-    #print(gcd(pair[3], key))
-    #print("M - ", M)
-    #print("secret - ", pair[5])
-    #print("open - ", pair[4])
-    #print("u - ", pair[3])
-    #print("n - ", pair[2])
+
     C = gorner(M, key, pair[2])
-    #C = (M**pair[4])%pair[2]
-    #print("C - ", C)
-    #d = alg_e(pair_A[4], pair_A[3])
-    #print("d - ", d)
-    #d = kpi_re(pair[4], pair[3]) % pair[3]
-    #print("d - ", d)
-    #print("M  - ", gorner(C, d, pair[2]))
+
     return C
 def Decrypt(C, pair, pair2):
     return gorner(C, pair, pair2)
@@ -215,15 +201,29 @@ def kpi_re(a, b):
 
     x, _, _ = euclid(a, b)
     return x
-def verify(pair_A, pair_B, M):
-    k_B = Decrypt(k1, pair_B[5], pair_B[2])
-    S_B = Decrypt(S1, pair_B[5], pair_B[2])
-    final_result = Decrypt(S_B, pair_A[4], pair_A[2])
+def Verify(M, final_result):
+    if M == final_result:
+       print("Signature is verified")
+arr = []
+def Send():
+    S = Sign(M, pair_A)
+    S1 = Encrypt(S, pair_B, pair_B[4])
+    k1 = Encrypt(M, pair_B, pair_B[4])
+    arr.append(k1)
+    arr.append(S1)
+    arr.append(S)
+    print("A sends confidential key to B(RSA):")
+    print("S - ", S)
+    print("S1 - ", S1)
+    print("k1 - ", k1)
+def Receive(pair_A, pair_B, M):
+    k_B = Decrypt(arr[0], pair_B[5], pair_B[2])
+    S_B = Decrypt(arr[1], pair_B[5], pair_B[2])
+    final_result = Decrypt(arr[2], pair_A[4], pair_A[2])
     print("k_B - ", k_B)
     print("S_B - ", S_B)
     print("signature - ", final_result)
-    if M == final_result:
-       print("Signature is verified")
+    Verify(M, final_result)
 
 generate_pair()
 #print(len(str(pair_A[0])))
@@ -238,9 +238,9 @@ print("second number in A is Prime: ",isPrime(pair_B[1], k))
 
 
 print("a", len(str(156962848314868059556431134966166206740777217306021974382558216785568212759799268227260499237979741587764149503287590182472188438280084531957681124715481401)))
-M = randint(1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, 999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000)
+M = randint(10000000000000000000000000000000000, 99999999999999999999999999999900000000000000000000000000)
 text = randint(1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, 999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000000000000000)
-print("RSA key - ", M)
+print("RSA key - ", hex(M))
 print(isPrime(pair_A[0], k))
 print(isPrime(pair_A[1], k))
 
@@ -278,17 +278,12 @@ print("Encrypted by A key: ", textA)
 textB = Encrypt(M, pair_B, pair_B[4])
 print("Encrypted by B key: ", textB)
 
-S = Sign(M, pair_A)
-S1 = Encrypt(S, pair_B, pair_B[4])
-k1 = Encrypt(M, pair_B, pair_B[4])
-#print("#", Decrypt(S, pair_A[4], pair_A[2]))
-print("A sends confidential key to B(RSA):")
-print("S - ", S)
-print("S1 - ", S1)
-print("k1 - ", k1)
+
+    #print("#", Decrypt(S, pair_A[4], pair_A[2]))
+Send()
 #--------------------------------------------------------------------------------------------------
 
-verify(pair_A, pair_B, M)
+Receive(pair_A, pair_B, M)
 #verify(pair_A, pair_B)
 
 
@@ -299,5 +294,8 @@ pair_test = [41, 17, 697, 640]
 #Encrypt(M, pair_test)
 #print(alg_e(17, 37))
 
-
+print("hex A e", hex(pair_A[4]))
+print("M hex", hex(pair_A[2]))
+print("k1 hex ", hex(arr[0]))
+print("S1 hex ", hex(arr[1]))
 
